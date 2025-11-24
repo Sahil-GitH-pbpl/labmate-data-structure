@@ -1,37 +1,48 @@
-# lab
-labxs.11
-# Doctor class
-class Doctor:
-    def __init__(self, doctor_id, name, specialty):
-        self.doctor_id = doctor_id
-        self.name = name
-        self.specialty = specialty
+# Infra HelpDesk
 
-# Patient class
-class Patient:
-    def __init__(self, patient_id, name, age, doctor_id):
-        self.patient_id = patient_id
-        self.name = name
-        self.age = age
-        self.doctor_id = doctor_id
+A FastAPI-based internal module for tracking infrastructure tickets with a lightweight vanilla JS frontend.
 
-# Example data
-doctors = [
-    Doctor(1, "Dr. Smith", "Cardiology"),
-    Doctor(2, "Dr. Jones", "Neurology")
-]
+## Features
+- Create tickets with optional photo upload
+- IT/Admin workflows: pick, commit, update, resolve, mark invalid
+- My/Department ticket views
+- Delayed pick auto-flagging and daily email summary jobs
+- Dockerized stack with MySQL
 
-patients = [
-    Patient(101, "Alice", 30, 1),
-    Patient(102, "Bob", 45, 2)
-]
+## Quick Start (Docker)
+1. Copy `.env.example` to `.env` in `backend/` and adjust if needed.
+2. Run `make up` to start backend, MySQL, and Adminer.
+3. Apply migrations: `make migrate`.
+4. Seed demo data: `make seed`.
+5. Open http://localhost:8000 for UI, Swagger at http://localhost:8000/docs.
 
-# Display all doctors
-print("Doctors:")
-for doc in doctors:
-    print(f"ID: {doc.doctor_id}, Name: {doc.name}, Specialty: {doc.specialty}")
+## Local Dev (venv)
+```bash
+cd backend
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+export DATABASE_URL=sqlite:///./local.db
+alembic upgrade head
+uvicorn app.main:app --reload
+```
 
-# Display all patients
-print("\nPatients:")
-for pat in patients:
-    print(f"ID: {pat.patient_id}, Name: {pat.name}, Age: {pat.age}, Doctor ID: {pat.doctor_id}")
+## Auth
+Use Bearer tokens that map to mock ARPRA JWTs:
+- Staff: `alice`
+- IT: `bob`
+- Admin: `admin`
+
+## Scripts
+- `make fmt` – Black format
+- `make lint` – Ruff lint
+- `make test` – run pytest suite
+- `make down` – stop containers
+
+## Tests
+Unit tests cover service rules and an API smoke flow.
+
+## Screenshots
+_Add screenshots here once captured._
+
+## Future
+Hook for V2 self-help suggestions is scaffolded via `V2_SELF_HELP_ENABLED` flag.

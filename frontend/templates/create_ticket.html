@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <title>Create Ticket</title>
+</head>
+<body>
+<header>
+    <h1>Create Infra Ticket</h1>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/my-tickets">My Tickets</a>
+    </nav>
+</header>
+<main class="card">
+    <form id="create-ticket-form" enctype="multipart/form-data">
+        <label>Category
+            <select name="category" id="category" required></select>
+        </label>
+        <label>Subcategory
+            <select name="subcategory" id="subcategory" required></select>
+        </label>
+        <label>Department/Location
+            <input type="text" name="department" required />
+        </label>
+        <label>Workstation
+            <input type="text" name="workstation" />
+        </label>
+        <label>Description
+            <textarea name="description" required></textarea>
+        </label>
+        <label>Photo (optional)
+            <input type="file" name="image" accept="image/png,image/jpeg" />
+        </label>
+        <button type="submit" class="btn">Submit Ticket</button>
+        <p id="form-message"></p>
+    </form>
+</main>
+<script src="/static/js/create-ticket.js"></script>
+</body>
+</html>
