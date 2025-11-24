@@ -9,3 +9,4 @@ pytz
 apscheduler
 python-multipart
 requests
+httpx
