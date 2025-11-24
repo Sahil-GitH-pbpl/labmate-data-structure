@@ -2,23 +2,14 @@ import os
 import tempfile
 
 import pytest
-from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+
+from app.auth.arpra_jwt import User
+from app.db import SessionLocal
+from app.models import Base
+
 
 os.environ["DATABASE_URL"] = "sqlite:///" + os.path.join(tempfile.gettempdir(), "test_infra.db")
-
-from app.main import app  # noqa: E402
-from app.db import get_db, SessionLocal  # noqa: E402
-from app.models import Base  # noqa: E402
-
-
-def override_get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 def setup_database():
@@ -28,10 +19,21 @@ def setup_database():
 
 
 setup_database()
-app.dependency_overrides[get_db] = override_get_db
 
 
 @pytest.fixture
-def client():
-    with TestClient(app) as c:
-        yield c
+def db_session():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+@pytest.fixture
+def users():
+    return {
+        "alice": User(username="alice", role="Staff", department="Operations"),
+        "bob": User(username="bob", role="IT", department="IT"),
+        "admin": User(username="admin", role="Admin", department="Admin"),
+    }

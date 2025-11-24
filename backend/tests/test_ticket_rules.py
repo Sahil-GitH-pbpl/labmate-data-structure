@@ -1,55 +1,48 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 import pytest
+from fastapi import HTTPException
 
+from app.schemas import TicketCreate
+from app.services import ticket_service
 from app.services.job_scheduler import delayed_pick_job
+from app.utils.time import now_ist
 
 
-def test_commitment_future_validation(client):
-    # create ticket
-    resp = client.post(
-        "/infra/create",
-        headers={"Authorization": "Bearer alice"},
-        data={
-            "category": "Hardware",
-            "subcategory": "Desktop",
-            "department": "Ops",
-            "description": "Test",
-        },
+def test_commitment_future_validation(db_session, users):
+    payload = TicketCreate(
+        category="Hardware",
+        subcategory="Desktop",
+        department="Ops",
+        description="Test",
+        workstation=None,
     )
-    ticket_id = resp.json()["ticket_id"]
-    past_time = (datetime.utcnow() - timedelta(hours=1)).isoformat()
-    resp = client.post(
-        f"/infra/pick/{ticket_id}",
-        headers={"Authorization": "Bearer bob"},
-        json={"commitment_time": past_time},
-    )
-    assert resp.status_code == 400
+    ticket = ticket_service.create_ticket(db_session, payload, users["alice"], image=None)
+    past_time = now_ist() - timedelta(hours=1)
+    with pytest.raises(HTTPException) as exc:
+        ticket_service.pick_ticket(db_session, ticket.ticket_id, None, past_time, users["bob"])
+    assert exc.value.status_code == 400
 
 
-def test_delayed_pick_flag(client):
-    from app.db import SessionLocal
+def test_delayed_pick_flag(db_session, users):
     from app.models import InfraTicket
 
-    db = SessionLocal()
     ticket = InfraTicket(
-        created_by="alice",
+        created_by=users["alice"].username,
         department="Ops",
         category="Hardware",
         subcategory="Desktop",
         description="Stale ticket",
         status="New",
-        created_at=datetime.utcnow() - timedelta(hours=4),
-        updated_at=datetime.utcnow() - timedelta(hours=4),
+        created_at=now_ist() - timedelta(hours=4),
+        updated_at=now_ist() - timedelta(hours=4),
     )
-    db.add(ticket)
-    db.commit()
-    db.refresh(ticket)
-    db.close()
+    db_session.add(ticket)
+    db_session.commit()
+    db_session.refresh(ticket)
 
     delayed_pick_job()
 
-    db = SessionLocal()
-    refreshed = db.get(InfraTicket, ticket.ticket_id)
+    db_session.expire_all()
+    refreshed = db_session.get(InfraTicket, ticket.ticket_id)
     assert refreshed.is_delayed_pick is True
-    db.close()
