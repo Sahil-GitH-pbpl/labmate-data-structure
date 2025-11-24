@@ -1,0 +1,32 @@
+version: '3.9'
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - backend/.env.example
+    volumes:
+      - ./uploads/infra:/app/uploads/infra
+      - ./frontend:/app/frontend
+    depends_on:
+      - mysql
+  mysql:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: infra_db
+      MYSQL_USER: infra_user
+      MYSQL_PASSWORD: infra_pass
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+volumes:
+  mysql_data:
