@@ -1,22 +1,22 @@
 .PHONY: up down migrate seed fmt lint test
 
 up:
-docker-compose up -d --build
+	docker-compose up -d --build
 
 down:
-docker-compose down
+	docker-compose down
 
 migrate:
-docker-compose run --rm backend alembic upgrade head
+	docker-compose run --rm backend alembic upgrade head
 
 seed:
-python scripts/seed.py
+	python scripts/seed.py
 
 fmt:
-black backend
+	black backend
 
 lint:
-ruff backend
+	ruff backend
 
 test:
-pytest backend/tests
+	pytest backend/tests

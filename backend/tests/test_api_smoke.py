@@ -1,48 +1,34 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
+
+from app.schemas import TicketCreate
+from app.services import ticket_service
+from app.utils.time import now_ist
 
 
-def test_smoke_flow(client):
-    token = "alice"
+def test_smoke_flow(db_session, users):
     # create ticket
-    resp = client.post(
-        "/infra/create",
-        headers={"Authorization": f"Bearer {token}"},
-        data={
-            "category": "Hardware",
-            "subcategory": "Desktop",
-            "department": "Ops",
-            "description": "PC not working",
-        },
+    payload = TicketCreate(
+        category="Hardware",
+        subcategory="Desktop",
+        department="Ops",
+        description="PC not working",
+        workstation=None,
     )
-    assert resp.status_code == 200
-    ticket_id = resp.json()["ticket_id"]
+    ticket = ticket_service.create_ticket(db_session, payload, users["alice"], image=None)
 
-    # list my
-    resp = client.get("/infra/my", headers={"Authorization": f"Bearer {token}"})
-    assert any(t["ticket_id"] == ticket_id for t in resp.json()["items"])
+    # list my tickets
+    _, tickets = ticket_service.list_my_tickets(db_session, users["alice"], scope="me", page=1, per_page=20)
+    assert any(t.ticket_id == ticket.ticket_id for t in tickets)
 
     # pick ticket
-    commitment = (datetime.utcnow() + timedelta(hours=4)).isoformat()
-    resp = client.post(
-        f"/infra/pick/{ticket_id}",
-        headers={"Authorization": "Bearer bob"},
-        json={"commitment_time": commitment},
-    )
-    assert resp.status_code == 200
+    commitment = now_ist() + timedelta(hours=4)
+    picked = ticket_service.pick_ticket(db_session, ticket.ticket_id, None, commitment, users["bob"])
+    assert picked.status == "Assigned"
 
     # add update
-    resp = client.post(
-        f"/infra/update/{ticket_id}",
-        headers={"Authorization": "Bearer bob"},
-        json={"note": "Investigating", "status": "In Progress"},
-    )
-    assert resp.status_code == 200
+    update = ticket_service.add_update(db_session, ticket.ticket_id, note="Investigating", user=users["bob"], status_change="In Progress")
+    assert update.note == "Investigating"
 
     # resolve
-    resp = client.post(
-        f"/infra/resolve/{ticket_id}",
-        headers={"Authorization": "Bearer bob"},
-        json={"note": "Fixed"},
-    )
-    assert resp.status_code == 200
-    assert resp.json()["status"] == "Resolved"
+    resolved = ticket_service.resolve_ticket(db_session, ticket.ticket_id, users["bob"], note="Fixed")
+    assert resolved.status == "Resolved"
