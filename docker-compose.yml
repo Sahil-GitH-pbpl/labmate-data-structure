@@ -1,32 +1,27 @@
 version: '3.9'
 services:
-  backend:
+  app:
     build: ./backend
     ports:
       - "8000:8000"
-    env_file:
-      - backend/.env.example
+    environment:
+      - DATABASE_URL=mysql+pymysql://arpra:arpra@db:3306/arpra_voc
+      - SECRET_KEY=arpra-secret
     volumes:
-      - ./uploads/infra:/app/uploads/infra
-      - ./frontend:/app/frontend
+      - ./backend/app:/app/app
     depends_on:
-      - mysql
-  mysql:
+      - db
+  db:
     image: mysql:8
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: infra_db
-      MYSQL_USER: infra_user
-      MYSQL_PASSWORD: infra_pass
+      MYSQL_DATABASE: arpra_voc
+      MYSQL_USER: arpra
+      MYSQL_PASSWORD: arpra
     ports:
       - "3307:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
+      - db_data:/var/lib/mysql
 volumes:
-  mysql_data:
+  db_data:

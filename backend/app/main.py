@@ -1,64 +1,47 @@
-import os
-from pathlib import Path
-
 from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
+from starlette.middleware.sessions import SessionMiddleware
+from starlette.templating import Jinja2Templates
 
-from .config import get_settings
-from .routers import health, tickets, updates
-from .services.job_scheduler import shutdown_scheduler, start_scheduler
+from app import models
+from app.config import get_settings
+from app.database import Base, engine
+from app.routers import auth, campaigns, dashboard, feedback_public, questionnaire, responses, tickets
 
 settings = get_settings()
-app = FastAPI(title="Infra HelpDesk", version="1.0.0")
+
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI(title=settings.app_name)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(SessionMiddleware, secret_key=settings.secret_key)
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-static_dir = BASE_DIR.parent / "frontend" / "static"
-templates = Jinja2Templates(directory=str(BASE_DIR.parent / "frontend" / "templates"))
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
-if static_dir.exists():
-    app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
-
-app.include_router(health.router)
-app.include_router(tickets.router)
-app.include_router(updates.router)
+templates = Jinja2Templates(directory="app/templates")
 
 
-@app.on_event("startup")
-async def startup_event():
-    start_scheduler()
+@app.get("/")
+async def root(request: Request):
+    user = request.session.get("user")
+    if not user:
+        return RedirectResponse(url="/auth/login", status_code=302)
+    return RedirectResponse(url="/dashboard", status_code=302)
 
 
-@app.on_event("shutdown")
-async def shutdown_event():
-    shutdown_scheduler()
-
-
-@app.get("/", response_class=HTMLResponse)
-async def index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
-
-
-@app.get("/create")
-async def create_page(request: Request):
-    return templates.TemplateResponse("create_ticket.html", {"request": request})
-
-
-@app.get("/it-actions")
-async def it_actions_page(request: Request):
-    return templates.TemplateResponse("it_actions.html", {"request": request})
-
-
-@app.get("/my-tickets")
-async def my_tickets_page(request: Request):
-    return templates.TemplateResponse("my_tickets.html", {"request": request})
+app.include_router(auth.router, prefix="/auth")
+app.include_router(campaigns.router, prefix="/campaigns")
+app.include_router(questionnaire.router, prefix="/questionnaire")
+app.include_router(feedback_public.router, prefix="/feedback")
+app.include_router(responses.router, prefix="/responses")
+app.include_router(tickets.router, prefix="/tickets")
+app.include_router(dashboard.router, prefix="")

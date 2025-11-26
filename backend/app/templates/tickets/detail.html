@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="text-xl font-semibold mb-4">Ticket {{ ticket.ticket_number }}</h2>
+<div class="bg-white p-4 rounded shadow space-y-2">
+    <p><span class="font-semibold">Status:</span> {{ ticket.status }}</p>
+    <p><span class="font-semibold">Severity:</span> {{ ticket.severity }}</p>
+    <p><span class="font-semibold">Summary:</span> {{ ticket.summary }}</p>
+    <p><span class="font-semibold">Details:</span> {{ ticket.details }}</p>
+</div>
+<div class="mt-4 bg-white p-4 rounded shadow">
+    <h3 class="font-semibold mb-2">Updates</h3>
+    <ul class="space-y-2">
+        {% for u in ticket.updates %}
+            <li class="border-b pb-2">
+                <p class="text-sm">{{ u.updated_at }} by {{ u.updated_by_user.name if u.updated_by_user else 'System' }}</p>
+                <p>{{ u.update_text }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+    <form method="post" action="/tickets/{{ ticket.id }}/update" class="mt-4 space-y-2">
+        <textarea name="update_text" class="w-full border rounded px-3 py-2" rows="3" placeholder="Add update"></textarea>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+            <div>
+                <label class="block text-sm font-semibold">Status</label>
+                <select name="status" class="border rounded px-3 py-2">
+                    <option value="open">Open</option>
+                    <option value="in_progress">In Progress</option>
+                    <option value="resolved">Resolved</option>
+                    <option value="closed">Closed</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-semibold">Closure Mood</label>
+                <select name="closure_mood" class="border rounded px-3 py-2">
+                    <option value="">--</option>
+                    <option value="happy">Happy</option>
+                    <option value="neutral">Neutral</option>
+                    <option value="sad">Sad</option>
+                </select>
+            </div>
+        </div>
+        <button class="bg-indigo-700 text-white px-4 py-2 rounded">Submit Update</button>
+    </form>
+</div>
+{% endblock %}

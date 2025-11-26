@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="flex justify-between items-center mb-4">
+    <h2 class="text-xl font-semibold">Campaigns</h2>
+    <a href="/campaigns/new" class="bg-indigo-700 text-white px-4 py-2 rounded">New Campaign</a>
+</div>
+<table class="w-full bg-white rounded shadow text-sm">
+    <thead class="bg-gray-100"><tr><th class="text-left p-2">Name</th><th class="text-left p-2">Type</th><th class="text-left p-2">Status</th><th class="p-2">Actions</th></tr></thead>
+    <tbody>
+    {% for c in campaigns %}
+        <tr class="border-t">
+            <td class="p-2">{{ c.name }}</td>
+            <td class="p-2">{{ c.campaign_type }}</td>
+            <td class="p-2">{{ c.status }}</td>
+            <td class="p-2 text-right">
+                <a href="/campaigns/{{ c.id }}/edit" class="text-indigo-700">Edit</a>
+                <a href="/questionnaire/{{ c.id }}" class="ml-2 text-green-700">Questions</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

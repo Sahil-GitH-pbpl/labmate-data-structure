@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="text-xl font-semibold mb-4">{{ 'Edit' if campaign else 'New' }} Campaign</h2>
+<form method="post" action="{{ action }}" class="bg-white p-4 rounded shadow space-y-3">
+    <div>
+        <label class="block text-sm font-semibold">Name</label>
+        <input type="text" name="name" value="{{ campaign.name if campaign else '' }}" class="w-full border rounded px-3 py-2" required>
+    </div>
+    <div>
+        <label class="block text-sm font-semibold">Code</label>
+        <input type="text" name="code" value="{{ campaign.code if campaign else '' }}" class="w-full border rounded px-3 py-2" {% if campaign %}readonly{% endif %} required>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div>
+            <label class="block text-sm font-semibold">Campaign Type</label>
+            <input type="text" name="campaign_type" value="{{ campaign.campaign_type if campaign else 'walk_in' }}" class="w-full border rounded px-3 py-2">
+        </div>
+        <div>
+            <label class="block text-sm font-semibold">Status</label>
+            <input type="text" name="status" value="{{ campaign.status if campaign else 'draft' }}" class="w-full border rounded px-3 py-2">
+        </div>
+        <div>
+            <label class="block text-sm font-semibold">Layout</label>
+            <select name="layout_type" class="w-full border rounded px-3 py-2">
+                <option value="one_page" {% if campaign and campaign.layout_type=='one_page' %}selected{% endif %}>One Page</option>
+                <option value="one_question_per_page" {% if campaign and campaign.layout_type=='one_question_per_page' %}selected{% endif %}>One Question Per Page</option>
+            </select>
+        </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div>
+            <label class="block text-sm font-semibold">Primary Language</label>
+            <select name="primary_language" class="w-full border rounded px-3 py-2">
+                <option value="en" {% if not campaign or campaign.primary_language=='en' %}selected{% endif %}>English</option>
+                <option value="hi" {% if campaign and campaign.primary_language=='hi' %}selected{% endif %}>Hindi</option>
+            </select>
+        </div>
+        <div>
+            <label class="block text-sm font-semibold">Estimated Fill Time (sec)</label>
+            <input type="number" name="estimated_fill_time_seconds" value="{{ campaign.estimated_fill_time_seconds if campaign else 60 }}" class="w-full border rounded px-3 py-2">
+        </div>
+        <div>
+            <label class="block text-sm font-semibold">Description</label>
+            <input type="text" name="description" value="{{ campaign.description if campaign else '' }}" class="w-full border rounded px-3 py-2">
+        </div>
+    </div>
+    <button type="submit" class="bg-indigo-700 text-white px-4 py-2 rounded">Save</button>
+</form>
+
+{% if questions %}
+<div class="mt-6 bg-white p-4 rounded shadow">
+    <div class="flex justify-between mb-2">
+        <h3 class="font-semibold">Questions</h3>
+        <form method="post" action="/questionnaire/{{ campaign.id }}/add_question" class="flex space-x-2">
+            <input type="text" name="question_text_en" placeholder="New question text" class="border rounded px-2 py-1" required>
+            <select name="question_type" class="border rounded px-2 py-1">
+                <option value="text">Text</option>
+                <option value="mcq_single">Single Choice</option>
+                <option value="mcq_multi">Multi Choice</option>
+                <option value="rating_1_5">Rating 1-5</option>
+            </select>
+            <label class="flex items-center space-x-1 text-sm"><input type="checkbox" name="is_required"> <span>Required</span></label>
+            <button class="bg-green-600 text-white px-3 rounded">Add</button>
+        </form>
+    </div>
+    <table class="w-full text-sm">
+        <thead><tr><th class="text-left">Text</th><th>Type</th><th>Options</th></tr></thead>
+        <tbody>
+            {% for q in questions %}
+            <tr class="border-t">
+                <td class="py-1">{{ q.question_text_en }}</td>
+                <td class="py-1 text-center">{{ q.question_type }}</td>
+                <td class="py-1">
+                    <form method="post" action="/questionnaire/{{ campaign.id }}/questions/{{ q.id }}/add_option" class="flex space-x-2 text-xs">
+                        <input type="text" name="option_text_en" placeholder="Option text" class="border rounded px-2 py-1" required>
+                        <input type="text" name="option_value" placeholder="Value" class="border rounded px-2 py-1" required>
+                        <select name="sentiment" class="border rounded px-2 py-1">
+                            <option value="positive">Positive</option>
+                            <option value="neutral">Neutral</option>
+                            <option value="negative">Negative</option>
+                        </select>
+                        <input type="number" name="score_value" value="0" class="border rounded px-2 py-1" style="width:80px;">
+                        <button class="bg-indigo-600 text-white px-3 rounded">Add Option</button>
+                    </form>
+                    <div class="text-gray-600 mt-1">
+                        {% for o in q.options %}
+                            <span class="inline-block bg-gray-100 px-2 py-1 rounded mr-1">{{ o.option_text_en }} ({{ o.score_value }})</span>
+                        {% endfor %}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endblock %}

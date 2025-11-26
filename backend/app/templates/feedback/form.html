@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ campaign.name }} | ARPRA Feedback</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+<div class="max-w-3xl mx-auto p-4">
+    <div class="bg-indigo-800 text-white p-4 rounded">
+        <h1 class="text-2xl font-bold">{{ campaign.name }}</h1>
+        <p class="text-sm">Estimated time: {{ campaign.estimated_fill_time_seconds }} seconds</p>
+    </div>
+    <form method="post" action="/feedback/{{ token }}" class="mt-4 space-y-4">
+        {% for q in questions %}
+        <div class="bg-white p-4 rounded shadow">
+            <div class="flex justify-between text-sm text-gray-500">
+                <span>Q{{ loop.index }} of {{ total_questions }}</span>
+                {% if q.is_required %}<span class="text-red-600">Required</span>{% endif %}
+            </div>
+            <p class="font-semibold text-lg">{{ q.question_text_en }}</p>
+            {% if q.question_type in ['text', 'file_upload'] %}
+                <textarea name="q_{{ q.id }}" class="w-full border rounded px-3 py-2" rows="3"></textarea>
+            {% elif q.question_type == 'mcq_multi' %}
+                <div class="space-y-1">
+                {% for o in q.options %}
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" name="q_{{ q.id }}" value="{{ o.option_value }}" class="text-indigo-700">
+                        <span>{{ o.option_text_en }}</span>
+                    </label>
+                {% endfor %}
+                </div>
+            {% else %}
+                <div class="space-y-1">
+                {% for o in q.options %}
+                    <label class="flex items-center space-x-2">
+                        <input type="radio" name="q_{{ q.id }}" value="{{ o.option_value }}" class="text-indigo-700" required>
+                        <span>{{ o.option_text_en }}</span>
+                    </label>
+                {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="w-full bg-indigo-700 text-white py-3 rounded">Submit Feedback</button>
+    </form>
+</div>
+</body>
+</html>
