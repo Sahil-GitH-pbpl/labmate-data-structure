@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="text-xl font-semibold mb-4">Response #{{ response.id }}</h2>
+<div class="bg-white p-4 rounded shadow space-y-2">
+    <p><span class="font-semibold">Campaign:</span> {{ response.campaign.name if response.campaign else '' }}</p>
+    <p><span class="font-semibold">Submitted:</span> {{ response.submission_time }}</p>
+    <p><span class="font-semibold">Overall Score:</span> {{ response.overall_score }}</p>
+    <p><span class="font-semibold">Status:</span> {{ response.status }}</p>
+</div>
+<div class="mt-4 bg-white p-4 rounded shadow">
+    <h3 class="font-semibold mb-2">Answers</h3>
+    <ul class="space-y-2">
+        {% for a in response.answers %}
+        <li class="border-b pb-2">
+            <p class="font-semibold">{{ a.question.question_text_en }}</p>
+            <p class="text-sm text-gray-700">{{ a.answer_text or a.selected_option_values }}</p>
+            <p class="text-xs text-gray-500">Sentiment: {{ a.sentiment or 'n/a' }}, Score: {{ a.score_value or 'n/a' }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

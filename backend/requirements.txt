@@ -10,3 +10,4 @@ apscheduler
 python-multipart
 requests
 httpx
+jinja2

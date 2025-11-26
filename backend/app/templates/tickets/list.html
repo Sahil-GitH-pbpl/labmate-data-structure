@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="text-xl font-semibold mb-4">Tickets</h2>
+<table class="w-full bg-white rounded shadow text-sm">
+    <thead class="bg-gray-100"><tr><th class="text-left p-2">Number</th><th class="text-left p-2">Campaign</th><th class="p-2">Status</th><th class="p-2">Severity</th><th class="p-2">Action</th></tr></thead>
+    <tbody>
+    {% for t in tickets %}
+        <tr class="border-t">
+            <td class="p-2">{{ t.ticket_number }}</td>
+            <td class="p-2">{{ t.campaign.name if t.campaign else '' }}</td>
+            <td class="p-2">{{ t.status }}</td>
+            <td class="p-2">{{ t.severity }}</td>
+            <td class="p-2 text-right"><a href="/tickets/{{ t.id }}" class="text-indigo-700">Open</a></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

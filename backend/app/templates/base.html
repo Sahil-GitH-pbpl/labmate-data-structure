@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARPRA – VoC Feedback Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 text-gray-900">
+<header class="bg-indigo-900 text-white p-4 shadow">
+    <div class="max-w-6xl mx-auto flex justify-between items-center">
+        <div>
+            <h1 class="text-xl font-bold">ARPRA – VoC Feedback Management System</h1>
+            <p class="text-sm">Dr Bhasin's Lab</p>
+        </div>
+        <nav class="space-x-4 text-sm">
+            <a href="/dashboard" class="hover:underline">Dashboard</a>
+            <a href="/campaigns/" class="hover:underline">Campaigns</a>
+            <a href="/responses/" class="hover:underline">Responses</a>
+            <a href="/tickets/" class="hover:underline">Tickets</a>
+            <a href="/auth/logout" class="hover:underline">Logout</a>
+        </nav>
+    </div>
+</header>
+<main class="max-w-6xl mx-auto p-4">
+    {% block content %}{% endblock %}
+</main>
+<footer class="text-center text-xs text-gray-500 py-4">&copy; {{ 2024 }} ARPRA Lab</footer>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="text-xl font-semibold mb-4">Responses</h2>
+<form method="get" class="mb-4 flex space-x-2">
+    <select name="campaign_id" class="border rounded px-3 py-2">
+        <option value="">All Campaigns</option>
+        {% for c in campaigns %}
+            <option value="{{ c.id }}" {% if selected_campaign == c.id %}selected{% endif %}>{{ c.name }}</option>
+        {% endfor %}
+    </select>
+    <button class="bg-indigo-700 text-white px-4 py-2 rounded">Filter</button>
+</form>
+<table class="w-full bg-white rounded shadow text-sm">
+    <thead class="bg-gray-100"><tr><th class="text-left p-2">Campaign</th><th class="text-left p-2">Submitted</th><th class="p-2">Score</th><th class="p-2">Status</th><th class="p-2">Action</th></tr></thead>
+    <tbody>
+    {% for r in responses %}
+        <tr class="border-t">
+            <td class="p-2">{{ r.campaign.name if r.campaign else '' }}</td>
+            <td class="p-2">{{ r.submission_time }}</td>
+            <td class="p-2 text-center">{{ r.overall_score }}</td>
+            <td class="p-2 text-center">{{ r.status }}</td>
+            <td class="p-2 text-right"><a href="/responses/{{ r.id }}" class="text-indigo-700">Open</a></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
