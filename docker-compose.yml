@@ -2,31 +2,77 @@ version: '3.9'
 services:
   backend:
     build: ./backend
-    ports:
-      - "8000:8000"
-    env_file:
-      - backend/.env.example
-    volumes:
-      - ./uploads/infra:/app/uploads/infra
-      - ./frontend:/app/frontend
+    container_name: hiccup_backend
     depends_on:
       - mysql
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: ${DB_USER:-hiccup_user}
+      DB_PASSWORD: ${DB_PASSWORD:-hiccup_pass}
+      DB_NAME: ${DB_NAME:-hiccup_db}
+      JWT_SECRET: ${JWT_SECRET:-supersecret}
+      JWT_ALGO: ${JWT_ALGO:-HS256}
+      WHATSAPP_API_URL: ${WHATSAPP_API_URL:-https://api.stewindia.test/send}
+      WHATSAPP_API_TOKEN: ${WHATSAPP_API_TOKEN:-changeme}
+      MANAGEMENT_GROUP_NUMBERS: ${MANAGEMENT_GROUP_NUMBERS:-}
+      TIMEZONE: Asia/Kolkata
+    ports:
+      - "7410:7410"
+    volumes:
+      - uploads:/app/uploads
+      - logs:/app/logs
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: hiccup_frontend
+    depends_on:
+      - backend
+    ports:
+      - "7411:80"
+    restart: unless-stopped
+
   mysql:
     image: mysql:8
-    restart: always
+    container_name: hiccup_mysql
+    command: mysqld --default-authentication-plugin=mysql_native_password
     environment:
-      MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: infra_db
-      MYSQL_USER: infra_user
-      MYSQL_PASSWORD: infra_pass
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpass}
+      MYSQL_DATABASE: ${DB_NAME:-hiccup_db}
+      MYSQL_USER: ${DB_USER:-hiccup_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-hiccup_pass}
     ports:
-      - "3307:3306"
+      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-  adminer:
-    image: adminer
-    restart: always
+    restart: unless-stopped
+
+  scheduler:
+    build: ./backend
+    container_name: hiccup_scheduler
+    command: ["python", "app/scheduler_worker.py"]
+    depends_on:
+      - mysql
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: ${DB_USER:-hiccup_user}
+      DB_PASSWORD: ${DB_PASSWORD:-hiccup_pass}
+      DB_NAME: ${DB_NAME:-hiccup_db}
+      JWT_SECRET: ${JWT_SECRET:-supersecret}
+      JWT_ALGO: ${JWT_ALGO:-HS256}
+      WHATSAPP_API_URL: ${WHATSAPP_API_URL:-https://api.stewindia.test/send}
+      WHATSAPP_API_TOKEN: ${WHATSAPP_API_TOKEN:-changeme}
+      MANAGEMENT_GROUP_NUMBERS: ${MANAGEMENT_GROUP_NUMBERS:-}
+      TIMEZONE: Asia/Kolkata
     ports:
-      - 8080:8080
+      - "7412:7412"
+    volumes:
+      - logs:/app/logs
+    restart: unless-stopped
+
 volumes:
   mysql_data:
+  uploads:
+  logs:

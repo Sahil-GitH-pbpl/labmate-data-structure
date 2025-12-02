@@ -4,8 +4,9 @@ from pathlib import Path
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
-from app.config import get_settings
-from app.models import Base
+from app.core.config import get_settings
+from app.db.base import Base
+from app.db import models  # noqa: F401
 
 config = context.config
 fileConfig(config.config_file_name)  # type: ignore
