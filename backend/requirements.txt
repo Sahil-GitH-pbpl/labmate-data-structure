@@ -5,8 +5,12 @@ pymysql
 alembic
 python-dotenv
 pydantic
+pydantic-settings
 pytz
 apscheduler
 python-multipart
 requests
 httpx
+python-jose
+loguru
+gunicorn
