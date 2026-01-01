@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ancient Dash: Rooftop Run</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+</head>
+<body>
+  <div id="overlay">
+    <div id="start-screen" class="panel">
+      <h1>Ancient Dash</h1>
+      <p>Egyptian rooftop parkour adventure!</p>
+      <div class="btn-row">
+        <button id="play-btn">Play</button>
+        <button id="continue-btn">Continue</button>
+        <button id="reset-btn">Reset Progress</button>
+      </div>
+      <p class="hint">Progress saves every checkpoint (local to this browser).</p>
+    </div>
+
+    <div id="pause-screen" class="panel hidden">
+      <h2>Paused</h2>
+      <button id="resume-btn">Resume</button>
+      <button id="controls-btn">Controls</button>
+      <button id="reset-btn-2">Reset Progress</button>
+      <button id="quit-btn">Quit to Start</button>
+      <div id="controls-info" class="hidden">
+        <p>WASD: Move | Mouse: Look | Space: Jump | Shift: Sprint | E: Interact | Esc: Pause</p>
+      </div>
+    </div>
+
+    <div id="checkpoint-banner" class="hidden">Checkpoint!</div>
+  </div>
+
+  <div id="hud" class="hidden">
+    <div id="progress">Checkpoint 1 / 45</div>
+    <div id="arrow">➜</div>
+    <div id="stamina-wrap">
+      <div id="stamina-bar"></div>
+    </div>
+  </div>
+
+  <canvas id="game"></canvas>
+  <script src="main.js"></script>
+</body>
+</html>
