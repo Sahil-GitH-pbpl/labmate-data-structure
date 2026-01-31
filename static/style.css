@@ -1,0 +1,256 @@
+:root {
+  --bg: #f0f4ff;
+  --card: #ffffff;
+  --accent: #3f7cac;
+  --accent-strong: #2a5f84;
+  --header: #e6eef7;
+  --muted: #4a5b73;
+  --text: #1f2a3a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 4px;
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #dfe9f3 0%, #f0f4ff 60%, #e7f2ff 100%);
+  color: var(--text);
+}
+
+h1 {
+  margin: 0 0 12px;
+  letter-spacing: 0.5px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid #d4deed;
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 0 12px 30px rgba(33, 76, 124, 0.12);
+  width: 100%;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-top: 12px;
+}
+
+input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #c4d2e6;
+  background: #f7faff;
+  color: var(--text);
+  width: 200px;
+  font-size: 14px;
+}
+
+button {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #f9fbff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(63, 124, 172, 0.3);
+}
+
+button.secondary {
+  background: #2f3a4c;
+  color: #f1f5fb;
+  border: 1px solid #1f2735;
+  box-shadow: 0 6px 14px rgba(17, 26, 38, 0.16);
+}
+
+button.active {
+  background: #f4a261;
+  color: #1f2a3a;
+  border: 1px solid #e48a3a;
+}
+
+button.secondary:hover {
+  background: #39475d;
+  box-shadow: 0 8px 16px rgba(17, 26, 38, 0.18);
+}
+
+#applyBtn {
+  background: #1d3f8b;
+  color: #ffffff;
+  font-weight: 800;
+}
+
+#applyBtn:hover {
+  background: #163570;
+}
+
+#status {
+  min-height: 20px;
+  color: #2a5f84;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 14px;
+  table-layout: fixed;
+  min-width: 1350px;
+}
+
+th,
+td {
+  border-bottom: 1px solid #d6e0ef;
+  padding: 11px 10px;
+  text-align: left;
+  font-size: 13px;
+  color: var(--muted);
+  vertical-align: top;
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+th {
+  color: #f5f8ff;
+  letter-spacing: 0.3px;
+  background: linear-gradient(135deg, #274b8a 0%, #1e6aa6 45%, #1aa6a6 100%);
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+}
+
+th:first-child {
+  border-top-left-radius: 10px;
+}
+
+th:last-child {
+  border-top-right-radius: 10px;
+}
+
+tr:nth-child(even) {
+  background: linear-gradient(90deg, #f9fbff 0%, #eef3fb 100%);
+}
+
+.scroll {
+  overflow: auto;
+  max-height: 78vh;
+}
+
+.scroll {
+  scrollbar-color: #1e6aa6 #e6edf7;
+  scrollbar-width: thin;
+}
+
+.scroll::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.scroll::-webkit-scrollbar-track {
+  background: #e6edf7;
+  border-radius: 12px;
+}
+
+.scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #274b8a 0%, #1e6aa6 45%, #1aa6a6 100%);
+  border-radius: 12px;
+  border: 2px solid #e6edf7;
+}
+
+.scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #1f4278 0%, #195c8f 45%, #168f8f 100%);
+}
+
+.link-btn {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: #2a5f84;
+  color: #f9fbff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.link-btn:hover {
+  background: #244e6a;
+}
+
+th.nowrap,
+td.nowrap {
+  white-space: nowrap;
+  word-break: keep-all;
+}
+
+td.wrap,
+th.wrap {
+  white-space: normal;
+  word-break: break-word;
+}
+
+td.truncate,
+th.truncate {
+  width: 180px;
+  max-width: 180px;
+}
+
+.truncate-pill {
+  display: block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #eef4fb;
+  border: 1px solid #d3e0f1;
+  color: #2a3f57;
+  font-weight: 600;
+  font-size: 12px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.truncate-pill:hover {
+  background: #e1edf8;
+}
+
+.col-patientid { width: 110px; }
+.col-patientname { width: 140px; }
+.col-mobileno { width: 110px; }
+.col-gender { width: 70px; }
+.col-reportstatus { width: 90px; }
+.col-age { width: 70px; }
+.col-bdate { width: 90px; }
+.col-doctor { width: 120px; }
+.col-doctormobile { width: 100px; }
+.col-panel { width: 110px; }
+.col-whatsapp { width: 90px; }
+.col-message { width: 90px; }
+
+@media (max-width: 640px) {
+  .row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  button,
+  input {
+    width: 100%;
+  }
+}

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Labmate Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="card">
+    <h1>Labmate Data Dashboard</h1>
+    <div class="row">
+      <input id="pid" placeholder="Enter Patient ID" />
+      <button id="applyBtn">Apply</button>
+    </div>
+    <div id="status"></div>
+    <div class="row" id="centerBtns"></div>
+    <div class="scroll">
+      <table id="dataTable">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
