@@ -26,6 +26,7 @@ DB_CONFIG = {
     "database": "Labmate_data_structure",
 }
 
+
 CENTER_MAP = {
     "10": "center10",
     "11": "center11",
